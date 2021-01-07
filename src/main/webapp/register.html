@@ -7,6 +7,36 @@
         <link rel="stylesheet" href="css/register.css">
 		<!--导入jquery-->
 		<script src="js/jquery-3.3.1.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $("#submitButton").on("click",function () {
+                    var reg = /^[a-zA-Z]\w{5,17}$/;
+                    var username = $("#username").val();
+                    if(reg.test(username)){
+                        $("#msg").html("");
+                        var url="user";//UserServlet
+                        var data = $("#registerForm").serialize();
+                        var callback =function(resultInfo){
+                            var resultInfoJson = $.parseJSON(resultInfo);
+                            if(resultInfoJson.flag){
+                                location.href="register_ok.html?"+resultInfoJson.mailAddress;
+                            }else{
+                                $("#msg").html(resultInfoJson.errorMsg);
+                                // $("#msg").html("好家伙原来你是获取不到");
+                                return false;
+                            }
+                        };
+                        var type="text";
+                        $.post(url,data,callback,type);
+                    }else{
+                        $("#msg").html("用户名规定：6~18个字符，首字符必须为英文字母");
+                        return false;//验证不通过，不提交表单
+                    }
+                });
+            });
+        </script>
+
+
     </head>
 	<body>
 	<!--引入头部-->
@@ -101,7 +131,7 @@
     							<td class="td_left"> 
     							</td>
     							<td class="td_right check"> 
-    								<input type="submit" class="submit" value="注册">
+    								<input id="submitButton" type="button" class="submit" value="注册">
 									<span id="msg" style="color: red;"></span>
     							</td>
     						</tr>

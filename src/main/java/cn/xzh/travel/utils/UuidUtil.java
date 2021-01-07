@@ -1,4 +1,4 @@
-package com.itheima.travel.util;
+package cn.xzh.travel.utils;
 
 import java.util.UUID;
 

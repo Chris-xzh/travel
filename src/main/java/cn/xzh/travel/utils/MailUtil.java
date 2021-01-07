@@ -1,4 +1,4 @@
-package com.itheima.travel.util;
+package cn.xzh.travel.utils;
 
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -44,7 +44,7 @@ public final class MailUtil {
 	 * 测试类
 	 */
 	public static void main(String[] args) throws Exception{
-		String toEmail = "zhangsan@itheima.com";
+		String toEmail = "zhangsan@xzh.com";
 		String emailMsg = "测试一下";
 		sendMail(toEmail,emailMsg);
 		System.out.println("发送成功。。。");
