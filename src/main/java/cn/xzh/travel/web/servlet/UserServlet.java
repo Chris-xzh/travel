@@ -1,10 +1,13 @@
 package cn.xzh.travel.web.servlet;
 
+import cn.xzh.travel.expection.PasswordErrorException;
 import cn.xzh.travel.expection.UserNameExistsException;
+import cn.xzh.travel.expection.UserNameNotExistsException;
 import cn.xzh.travel.expection.UserNameNotNullException;
 import cn.xzh.travel.pojo.ResultInfo;
 import cn.xzh.travel.pojo.User;
 import cn.xzh.travel.service.UserService;
+import cn.xzh.travel.utils.Md5Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -32,6 +35,10 @@ public class UserServlet extends HttpServlet {
             register(request,response);
         }else if("active".equals(action)){
             active(request,response);
+        }else if("login".equals(action)){
+            login(request, response);
+        }else if("getLoginUserData".equals(action)){
+            getLoginUserData(request,response);
         }
     }
     private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -78,4 +85,56 @@ public class UserServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
+
+    private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        try {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            password = Md5Util.encodeByMd5(password);
+            String sysCheckCode = (String) request.getSession().getAttribute("CHECKCODE_SERVER");
+            String userCheckCode = request.getParameter("check");
+            if (sysCheckCode != null && !userCheckCode.equalsIgnoreCase(sysCheckCode)) {
+                resultInfo = new ResultInfo(false, "验证码错误");
+            } else {
+                User dbUser = userService.login(username, password);
+                //判断登录是否成功
+                if (dbUser != null) {
+                    //登录成功，将用户信息写入session
+                    request.getSession().setAttribute("loginUser", dbUser);
+                    //实例返回数据对象
+                    resultInfo = new ResultInfo(true);
+                }
+            }
+       } catch (UserNameNotNullException e) {
+            resultInfo = new ResultInfo(false, e.getMessage());
+        } catch (UserNameNotExistsException e) {
+            //用户名不存在或错误
+            resultInfo = new ResultInfo(false, e.getMessage());
+        } catch (PasswordErrorException e) {
+            //密码错误
+            resultInfo = new ResultInfo(false, e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);//系统异常，抛到友好页面
+        }
+        String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(jsonData);
+    }
+
+    private void getLoginUserData(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        User user =(User) request.getSession().getAttribute("loginUser");
+        if(user==null){
+            resultInfo = new ResultInfo(false);
+        }else{
+            resultInfo = new ResultInfo(true,user,null);
+        }
+        String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
+        System.out.println(jsonData);
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(jsonData);
+    }
+
 }
