@@ -19,28 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/user")
-public class UserServlet extends HttpServlet {
+public class UserServlet extends BaseServlet {
     /**
      * 实例用户业务类
      */
     private UserService userService = new UserService();
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request,response);
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if("register".equals(action)){
-            register(request,response);
-        }else if("active".equals(action)){
-            active(request,response);
-        }else if("login".equals(action)){
-            login(request, response);
-        }else if("getLoginUserData".equals(action)){
-            getLoginUserData(request,response);
-        }
-    }
     private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ResultInfo resultInfo =new ResultInfo();
         String userCheckCode = request.getParameter("check");
@@ -137,4 +121,8 @@ public class UserServlet extends HttpServlet {
         response.getWriter().write(jsonData);
     }
 
+    private void loginOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getSession().invalidate();
+        response.sendRedirect(request.getContextPath()+"/login.html");
+    }
 }
