@@ -45,9 +45,22 @@
                 <a href="/"><img src="images/logo2.jpg" alt=""></a>
             </div>
             <div class="search">
-                <input name="" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
-                <a href="javascript:;" class="search-button">搜索</a>
+                <input name="rname" id="rname" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
+                <a href="javascript:commitSearch()" class="search-button">搜索</a>
             </div>
+            <script type="text/javascript" src="js/getParameter.js"></script>
+            <script type="text/javascript">
+                function commitSearch() {
+                    var cid = getParameter("cid");
+                    location.href="route_list.html?rname="+$("#rname").val()+"&cid="+cid;
+                }
+                $(function () {
+                    var rname= getParameter("rname");
+                    if(rname){
+                        $("#rname").val(decodeURI(rname));//保留上一次搜索的值
+                    }
+                });
+            </script>
             <div class="hottel">
                 <div class="hot_pic">
                     <img src="images/hot_tel.jpg" alt="">
@@ -87,7 +100,7 @@
                        var category = categoryList[i];
                        var cid = category.cid;
                        var cname = category.cname;
-                       html+="<li><a href='route_list.html'>"+cname+"</a></li>";
+                       html+="<li><a href='route_list.html?cid="+cid+"'>"+cname+"</a></li>";
                    }
                    html+="<li><a href='favoriterank.html'>收藏排行榜</a></li>";
                    $(".nav").html(html);
