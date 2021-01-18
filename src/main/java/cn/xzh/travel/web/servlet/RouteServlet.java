@@ -1,5 +1,6 @@
 package cn.xzh.travel.web.servlet;
 
+import cn.xzh.travel.pojo.PageBean;
 import cn.xzh.travel.pojo.ResultInfo;
 import cn.xzh.travel.pojo.Route;
 import cn.xzh.travel.service.RouteService;
@@ -30,7 +31,31 @@ public class RouteServlet extends BaseServlet{
             resultInfo = new ResultInfo(false);
         }
         String jsonData = new ObjectMapper().writeValueAsString(resultInfo);
-        System.out.println(jsonData);
         response.getWriter().write(jsonData);
     }
+
+    private void findRouteListByCid(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        try {
+            int curPage = 1;
+            String curPageStr = request.getParameter("curPage");
+            String cid = request.getParameter("cid");
+            String rname = request.getParameter("rname");
+            if (curPageStr != null && !curPageStr.equals("")) {
+                curPage = Integer.parseInt(curPageStr);
+            }
+            PageBean pageBean = routeService.getPageBean(cid,curPage,rname);
+            resultInfo = new ResultInfo(true,pageBean,null);
+        }catch (Exception e){
+            e.printStackTrace();
+            resultInfo = new ResultInfo(false);
+        }
+        String jsonData = new ObjectMapper().writeValueAsString(resultInfo);
+        response.getWriter().write(jsonData);
+    }
+
+
+
+
+
 }

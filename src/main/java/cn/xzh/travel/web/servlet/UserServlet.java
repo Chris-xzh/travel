@@ -116,7 +116,6 @@ public class UserServlet extends BaseServlet {
             resultInfo = new ResultInfo(true,user,null);
         }
         String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
-        System.out.println(jsonData);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonData);
     }

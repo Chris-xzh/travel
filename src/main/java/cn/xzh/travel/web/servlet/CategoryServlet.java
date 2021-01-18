@@ -14,6 +14,7 @@ import java.io.IOException;
 public class CategoryServlet extends BaseServlet{
 
     private CategoryService categoryService = new CategoryService();
+
     private void findAllCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ResultInfo resultInfo = null;
         try {
