@@ -54,8 +54,18 @@ public class RouteServlet extends BaseServlet{
         response.getWriter().write(jsonData);
     }
 
-
-
-
-
+    private void findRouteByRid(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        try{
+            String rid = request.getParameter("rid");
+            Route route = routeService.findRouteByRid(rid);
+            resultInfo = new ResultInfo(true,route,null);
+        }catch (Exception e){
+            e.printStackTrace();
+            resultInfo = new ResultInfo(false);
+        }
+        String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
+        System.out.println(jsonData);
+        response.getWriter().write(jsonData);
+    }
 }

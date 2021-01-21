@@ -14,6 +14,7 @@ public class BaseServlet extends HttpServlet{
     @Override
     public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
         try {
+            request.setCharacterEncoding("utf-8");
             response.setCharacterEncoding("utf-8");
             String action = request.getParameter("action");
             Class clazz = this.getClass();

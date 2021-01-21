@@ -15,7 +15,7 @@
         $(function () {
             var cid= getParameter("cid");
             var curPage = getParameter("curPage");
-            var rname = getParameter("rname");
+            var rname = getParameter("cname");
             var url="route";
             var data = {action:"findRouteListByCid",cid:cid,curPage:curPage,rname:rname};
             var callback = function(resultInfo){
@@ -37,7 +37,7 @@
                             "<span>"+route.price+"</span>\n" +
                             "<span>起</span>\n" +
                             "</p>\n" +
-                            "<p><a href=\"route_detail.html\">查看详情</a></p>\n" +
+                            "<p><a href=\"route_detail.html?rid="+route.rid+"\">查看详情</a></p>\n" +
                             "</div>\n" +
                             "</li>";
                     }
@@ -122,7 +122,7 @@
                     </ul>
                     <div class="page_num_inf">
                         <i></i> 共
-                        <span>12</span>页<span>132</span>条
+                        <span></span>页<span></span>条
                     </div>
                     <div class="pageNum">
                         <ul>

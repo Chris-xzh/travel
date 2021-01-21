@@ -110,8 +110,90 @@
     <script src="js/bootstrap.min.js"></script>
     <!--导入布局js，共享header和footer-->
     <script type="text/javascript" src="js/include.js"></script>
+    <script type="text/javascript" src="js/getParameter.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var rid = getParameter("rid");
+            var url="route";//访问RouteServlet
+            var data = {action:"findRouteByRid",rid:rid};//请求数据
+            var callback = function (resultInfo) {
+                if(resultInfo.flag){
+                    $(".bread_box").html("<a href=\"index.html\">首页</a>\n" +
+                        "            <span> &gt;</span>\n" +
+                        "            <a href=\"route_list.html?cid="+resultInfo.data.category.cid+"\">"+resultInfo.data.category.cname+"</a><span> &gt;</span>\n" +
+                        "            <a href=\"#\">"+resultInfo.data.rname+"</a>");
+                    $(".prosum_right .pros_title").html(resultInfo.data.rname);
+                    $(".prosum_right .hot").html(resultInfo.data.routeIntroduce);
+                    $(".prosum_right .pros_other").html("<p>经营商家  ："+resultInfo.data.seller.sname+"</p>\n" +
+                        "                    <p>咨询电话 : "+resultInfo.data.seller.consphone+"</p>\n" +
+                        "                    <p>地址 ： "+resultInfo.data.seller.address+"</p>");
+                    $(".prosum_right .price strong").html("&yen;"+resultInfo.data.price);
+                    $(".prosum_right .collect span").html("已收藏"+resultInfo.data.count+"次");
+                    if(resultInfo.data.routeImgList!=null && resultInfo.data.routeImgList.length>0) {
+                        var html = "<dt>\n" +
+                            "                    <img alt=\"\" class=\"big_img\" src=\"" + resultInfo.data.routeImgList[0].bigPic + "\">\n" +
+                            "                </dt>\n" +
+                            "                <dd>\n" +
+                            "                    <a class=\"up_img\"></a>";
+                        for (var i = 0; i < resultInfo.data.routeImgList.length; i++) {
+                            if (i < 4) {
+                                html += "<a title=\"\" class=\"little_img\" data-bigpic=\"" + resultInfo.data.routeImgList[i].bigPic + "\" style=\"display: block;\">\n" +
+                                    "                        <img src=\"" + resultInfo.data.routeImgList[i].smallPic + "\">\n" +
+                                    "                    </a>";
+                            } else {
+                                html += "<a title=\"\" class=\"little_img\" data-bigpic=\"" + resultInfo.data.routeImgList[i].bigPic + "\" style=\"display: none;\">\n" +
+                                    "                        <img src=\"" + resultInfo.data.routeImgList[i].smallPic + "\">\n" +
+                                    "                    </a>";
+                            }
+                        }
+                        html += "<a class=\"down_img\" style=\"margin-bottom: 0;\"></a>\n" +
+                            "                </dd>\n" +
+                            "            </dl>";
+                        $("dl.prosum_left").html(html);
+                        imgGo();
+                    }
+                }
+            };
+            var type = "json";
+            $.post(url,data,callback,type);
+        });
+        function imgGo() {
+            //焦点图效果
+            //点击图片切换图片
+            $('.little_img').on('mousemove', function() {
+                $('.little_img').removeClass('cur_img');
+                var big_pic = $(this).data('bigpic');
+                $('.big_img').attr('src', big_pic);
+                $(this).addClass('cur_img');
+            });
+            //上下切换
+            var picindex = 0;
+            var nextindex = 4;
+            $('.down_img').on('click',function(){
+                var num = $('.little_img').length;
+                if((nextindex + 1) <= num){
+                    $('.little_img:eq('+picindex+')').hide();
+                    $('.little_img:eq('+nextindex+')').show();
+                    picindex = picindex + 1;
+                    nextindex = nextindex + 1;
+                }
+            });
+            $('.up_img').on('click',function(){
+                var num = $('.little_img').length;
+                if(picindex > 0){
+                    $('.little_img:eq('+(nextindex-1)+')').hide();
+                    $('.little_img:eq('+(picindex-1)+')').show();
+                    picindex = picindex - 1;
+                    nextindex = nextindex - 1;
+                }
+            });
+            //自动播放
+            var timer = setInterval("auto_play()", 5000);
+        }
+    </script>
+
     <script>
-    $(document).ready(function() {
+    /*$(document).ready(function() {
         //焦点图效果
         //点击图片切换图片
         $('.little_img').on('mousemove', function() {
@@ -143,7 +225,7 @@
         });
         //自动播放
         // var timer = setInterval("auto_play()", 5000);
-    });
+    });*/
 
     //自动轮播方法
     function auto_play() {

@@ -100,7 +100,7 @@
                        var category = categoryList[i];
                        var cid = category.cid;
                        var cname = category.cname;
-                       html+="<li><a href='route_list.html?cid="+cid+"'>"+cname+"</a></li>";
+                       html+="<li><a href='route_list.html?cid="+cid+"&cname="+cname+"'>"+cname+"</a></li>";
                    }
                    html+="<li><a href='favoriterank.html'>收藏排行榜</a></li>";
                    $(".nav").html(html);

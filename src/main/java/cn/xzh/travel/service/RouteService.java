@@ -1,8 +1,8 @@
 package cn.xzh.travel.service;
 
 import cn.xzh.travel.dao.RouteDao;
-import cn.xzh.travel.pojo.PageBean;
-import cn.xzh.travel.pojo.Route;
+import cn.xzh.travel.pojo.*;
+import org.apache.commons.beanutils.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +57,19 @@ public class RouteService {
         return arrayList;
     }
 
-
+    public Route findRouteByRid(String rid)throws Exception {
+        Map<String,Object> map =  routeDao.findRouteByRid(rid);
+        Route route = new Route();//旅游线路对象
+        Category category = new Category();//所属分类对象
+        Seller seller = new Seller();//所属商家对象
+        BeanUtils.populate(route,map);
+        BeanUtils.populate(category,map);
+        BeanUtils.populate(seller,map);
+        route.setCategory(category);
+        route.setSeller(seller);
+        List<RouteImg> routeImgs = routeDao.findRouteImgsByRid(rid);
+        route.setRouteImgList(routeImgs);
+        return route;
+    }
 
 }

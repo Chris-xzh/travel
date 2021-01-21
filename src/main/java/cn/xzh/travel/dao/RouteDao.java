@@ -1,6 +1,7 @@
 package cn.xzh.travel.dao;
 
 import cn.xzh.travel.pojo.Route;
+import cn.xzh.travel.pojo.RouteImg;
 import cn.xzh.travel.utils.JdbcUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,25 +33,20 @@ public class RouteDao {
     }
 
     public int getCountByCid(String cid,String rname) {
-        //查找上架当前分类旅游线路的总记录数
-        StringBuilder sqlBuilder= new StringBuilder("SELECT COUNT(*) FROM tab_route WHERE rflag='1'");
-        //定义存储sql参数占位符对应值的动态集合
+        StringBuilder sqlBuilder= new StringBuilder("SELECT COUNT(*) FROM tab_route r,tab_category c WHERE c.cid=r.cid AND rflag='1' ");
         List<Object> paramList = new ArrayList<Object>();
-        //当前cid条件有效是进行sql语句拼接过滤
         if(cid!=null && !cid.trim().equals("")){
-            sqlBuilder.append(" AND cid=?");
+            sqlBuilder.append(" AND c.cid=?");
             paramList.add(cid);
         }
-        //当前rname条件有效是进行sql语句拼接过滤
         if(rname!=null && !rname.trim().equals("")){
-            sqlBuilder.append(" AND rname like ?");
+            sqlBuilder.append(" AND c.cname like ?");
             try {
                 paramList.add("%" + URLDecoder.decode(rname, "utf-8") + "%");
             }catch (Exception e){
                 e.printStackTrace();//不需要别的地方处理异常，所以此处直接处理
             }
         }
-        //将List<Object>转换为执行时需要Object[]
         Object[] params = paramList.toArray();
         int count = jdbcTemplate.queryForObject(sqlBuilder.toString(),params,Integer.class);
         return count;
@@ -64,7 +60,7 @@ public class RouteDao {
             paramList.add(cid);
         }
         if(rname!=null && !rname.trim().equals("")){
-            sqlBuilder.append(" AND r.rname like ?");
+            sqlBuilder.append(" AND c.cname like ?");
             try {
                 paramList.add("%" + URLDecoder.decode(rname, "utf-8") + "%");
             }catch (Exception e){
@@ -81,6 +77,14 @@ public class RouteDao {
         return mapList;
     }
 
+    public Map<String,Object> findRouteByRid(String rid) {
+        String sql="SELECT * FROM tab_route r,tab_category c,tab_seller s WHERE r.cid = c.cid AND r.sid=s.sid AND r.rflag='1' AND r.rid=?";
+        return jdbcTemplate.queryForMap(sql,new Object[]{rid});
+    }
 
+    public List<RouteImg> findRouteImgsByRid(String rid) {
+        String sql="SELECT * FROM tab_route_img WHERE rid=?";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<RouteImg>(RouteImg.class),rid);
+    }
 
 }
