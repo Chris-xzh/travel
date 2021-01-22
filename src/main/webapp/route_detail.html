@@ -68,9 +68,9 @@
                 <div class="pros_price">
                     <p class="price"><strong>¥2699.00</strong><span>起</span></p>
                     <p class="collect">
-                        <a class="btn"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
+                        <!--<a class="btn"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>-->
 
-                        <a  class="btn already" disabled="disabled"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
+                        <a onclick="addFavorite()"  class="btn already" disabled="disabled"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
                         <span>已收藏100次</span>
                     </p>
                 </div>        
@@ -157,6 +157,46 @@
             var type = "json";
             $.post(url,data,callback,type);
         });
+        var rid = getParameter("rid");
+        function addFavorite() {
+            var url="favorite";//请求FavoriteServlet
+            var data = {action:"addFavorite",rid:rid};//提交数据
+            var callback = function (resultInfo) {
+                if(resultInfo.flag){
+                    if(resultInfo.data==false){
+                        location.href="login.html";
+                    }else if(resultInfo.data>0){
+                        $(".prosum_right .collect a").addClass("already");
+                        $(".prosum_right .collect a").attr("disabled","disabled");
+                        $(".prosum_right .collect a").removeAttr("onclick");
+                        $(".prosum_right .collect span").html("已收藏"+resultInfo.data+"次");
+                    }
+                }
+            };
+            var type="json";
+            $.post(url,data,callback,type);
+        }
+
+        $(function () {
+            var rid = getParameter("rid");
+            var url="route";//访问RouteServlet
+            var data = {action:"isFavoriteByRid",rid:rid};//提交数据
+            var callback=function (resultInfo) {
+                if(resultInfo.flag){
+                    if(!resultInfo.data){
+                        $(".prosum_right .collect a").removeClass("already");
+                        $(".prosum_right .collect a").removeAttr("disabled");
+                    }else{
+                        $(".prosum_right .collect a").removeAttr("onclick");
+                    }
+                }
+            };
+            var type="json";
+            $.post(url,data,callback,type);
+        });
+
+
+
         function imgGo() {
             //焦点图效果
             //点击图片切换图片
