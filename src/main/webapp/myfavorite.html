@@ -15,6 +15,68 @@
            }
        </style>
        <script src="js/jquery-3.3.1.js"></script>
+       <script type="text/javascript" src="js/getParameter.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                var curPage = getParameter("curPage");//获取当前页
+                var url="favorite";//FavoriteServlet地址
+                var data={action:"findFavoriteByPage",curPage:curPage};//提交数据
+                var callback=function (resultInfo) {
+                    if (resultInfo.flag) {
+                        var pageBean = resultInfo.data;
+                        var html = "";
+                        for (var i = 0; i < pageBean.data.length; i++) {
+                            var favorite = pageBean.data[i];
+                            html += "<div class=\"col-md-3\">\n" +
+                                "       <a href=\"route_detail.html\">\n" +
+                                "            <img src=\"" + favorite.route.rimage + "\" alt=\"\">\n" +
+                                "            <div class=\"has_border\">\n" +
+                                "                   <h3>" + favorite.route.rname + "</h3>\n" +
+                                "                   <div class=\"price\">网付价<em>￥</em><strong>" + favorite.route.price + "</strong><em>起</em></div>\n" +
+                                "            </div>\n" +
+                                "       </a>\n" +
+                                "  </div>";
+                        }
+                        $(".tab-content .tab-pane .row").html(html);
+                        html = "<li><a href=\"myfavorite.html?curPage=" + pageBean.firstPage + "\">首页</a></li>";
+                        if (pageBean.curPage > 1) {
+                            html += "<li class=\"threeword\"><a href=\"myfavorite.html?curPage=" + pageBean.prePage + "\">上一页</a></li>";
+                        }
+                        var begin;//起始页
+                        var end;//结束页
+                        if (pageBean.totalPage <= 10) {
+                            begin = 1;
+                            end = pageBean.totalPage;
+                        } else {
+                            begin = pageBean.curPage - 5;
+                            end = pageBean.curPage + 4;
+                            if (begin < 1) {
+                                begin = 1;
+                                end = 10;
+                            }
+                            if (end > pageBean.totalPage) {
+                                end = pageBean.totalPage;
+                                begin = pageBean.totalPage - 9;
+                            }
+                        }
+                        for (var i = begin; i <= end; i++) {
+                            if (pageBean.curPage == i) {
+                                html += " <li class='curPage'><a href=\"myfavorite.html?curPage=" + i + "\">" + i + "</a></li>";
+                            } else {
+                                html += " <li><a href=\"myfavorite.html?curPage=" + i + "\">" + i + "</a></li>";
+                            }
+                        }
+                        if (pageBean.curPage < pageBean.totalPage) {
+                            html += "<li class=\"threeword\"><a href=\"myfavorite.html?curPage=" + pageBean.nextPage + "\">下一页</a></li>";
+                        }
+                        html += "<li class=\"threeword\"><a href=\"myfavorite.html?curPage=" + pageBean.totalPage + "\">末页</a></li>";
+                        $(".pageNum ul").html(html);
+                    }
+                };
+                var type="json";//返回数据类型
+                $.post(url,data,callback,type);
+            });
+        </script>
     </head>
     <body>
     <!--引入头部-->

@@ -3,6 +3,8 @@ package cn.xzh.travel.web.servlet;
 import cn.xzh.travel.pojo.PageBean;
 import cn.xzh.travel.pojo.ResultInfo;
 import cn.xzh.travel.pojo.Route;
+import cn.xzh.travel.pojo.User;
+import cn.xzh.travel.service.FavoriteService;
 import cn.xzh.travel.service.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.istack.internal.logging.Logger;
@@ -19,6 +21,9 @@ import java.util.Map;
 public class RouteServlet extends BaseServlet{
 
     private RouteService routeService = new RouteService();
+    private FavoriteService favoriteService = new FavoriteService();
+
+
     private static Logger log = Logger.getLogger(RouteServlet.class.getClass());
 
     private void routeCareChoose(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,6 +71,25 @@ public class RouteServlet extends BaseServlet{
         }
         String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
         System.out.println(jsonData);
+        response.getWriter().write(jsonData);
+    }
+
+    private void isFavoriteByRid(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        try {
+            User user = (User) request.getSession().getAttribute("loginUser");
+            if(user==null){
+                resultInfo = new ResultInfo(true,false,null);
+            }else{
+                String rid = request.getParameter("rid");
+                boolean isFavorite =favoriteService.isFavoriteByRidAndUserId(rid,user.getUid());
+                resultInfo = new ResultInfo(true,isFavorite,null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            resultInfo = new ResultInfo(false);//false代表发送了错误
+        }
+        String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
         response.getWriter().write(jsonData);
     }
 }
