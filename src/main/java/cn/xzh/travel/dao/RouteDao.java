@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.net.URLDecoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,60 @@ public class RouteDao {
     public List<RouteImg> findRouteImgsByRid(String rid) {
         String sql="SELECT * FROM tab_route_img WHERE rid=?";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<RouteImg>(RouteImg.class),rid);
+    }
+
+    public int getCountByFavoriteRank(Map<String,Object> conditionMap) throws SQLException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM tab_route WHERE rflag='1'");
+        List<Object> paramList = new ArrayList<Object>();
+        Object rnameObj = conditionMap.get("rname");
+        if(rnameObj!=null && !rnameObj.toString().trim().equals("")){
+            sqlBuilder.append(" and rname like ?");
+            paramList.add("%"+rnameObj.toString().trim()+"%");
+        }
+        Object startPriceObj = conditionMap.get("startPrice");
+        if(startPriceObj!=null && !startPriceObj.toString().trim().equals("")){
+            sqlBuilder.append(" and price >= ?");
+            paramList.add(startPriceObj.toString());
+        }
+        Object endPriceObj = conditionMap.get("endPrice");
+        if(endPriceObj!=null && !endPriceObj.toString().trim().equals("")){
+            sqlBuilder.append(" and price <= ?");
+            paramList.add(endPriceObj.toString().trim());
+        }
+        Object[] params = paramList.toArray();
+        return jdbcTemplate.queryForObject(sqlBuilder.toString(),params,Integer.class);
+    }
+    /**
+     * 获取旅游线路收藏数量降序的排行榜当前页数据列表
+     * @param curPage
+     * @param pageSize
+     * @return List<Route>
+     */
+    public List<Route> getRoutesFavoriteRankByPage(int curPage,int pageSize,Map<String,Object> conditionMap)throws SQLException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM tab_route WHERE rflag='1'");
+        List<Object> paramList = new ArrayList<Object>();
+        Object rnameObj = conditionMap.get("rname");
+        if(rnameObj!=null && !rnameObj.toString().trim().equals("")){
+            sqlBuilder.append(" and rname like ?");
+            paramList.add("%"+rnameObj.toString().trim()+"%");
+        }
+        Object startPriceObj = conditionMap.get("startPrice");
+        if(startPriceObj!=null && !startPriceObj.toString().trim().equals("")){
+            sqlBuilder.append(" and price >= ?");
+            paramList.add(startPriceObj.toString());
+        }
+        Object endPriceObj = conditionMap.get("endPrice");
+        if(endPriceObj!=null && !endPriceObj.toString().trim().equals("")){
+            sqlBuilder.append(" and price <= ?");
+            paramList.add(endPriceObj.toString().trim());
+        }
+        sqlBuilder.append(" ORDER BY COUNT DESC LIMIT ?,?");
+        int start = (curPage-1)*pageSize;
+        int length = pageSize;
+        paramList.add(start);
+        paramList.add(length);
+        Object[] params = paramList.toArray();
+        return  jdbcTemplate.query(sqlBuilder.toString(), new BeanPropertyRowMapper<Route>(Route.class),params);
     }
 
 }

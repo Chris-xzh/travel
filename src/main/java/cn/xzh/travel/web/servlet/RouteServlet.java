@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,28 @@ public class RouteServlet extends BaseServlet{
         }catch (Exception e){
             e.printStackTrace();
             resultInfo = new ResultInfo(false);//false代表发送了错误
+        }
+        String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
+        response.getWriter().write(jsonData);
+    }
+
+    private void findRoutesFavoriteRank(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResultInfo resultInfo = null;
+        try {
+            int curPage = 1;//默认第1页
+            String curPageStr = request.getParameter("curPage");
+            if(curPageStr!=null && !curPageStr.trim().equals("")){
+                curPage = Integer.parseInt(curPageStr);
+            }
+            Map<String,Object> conditionMap = new HashMap<String,Object>();
+            conditionMap.put("rname",request.getParameter("rname"));//封装旅游线路名称搜索条件
+            conditionMap.put("startPrice",request.getParameter("startPrice"));//封装最小金额搜索条件
+            conditionMap.put("endPrice",request.getParameter("endPrice"));//封装最大金额搜索条件
+            PageBean<Route> pageBean = routeService.getPageBeanByFavoriteRank(curPage,conditionMap);
+            resultInfo = new ResultInfo(true,pageBean,null);
+        }catch (Exception e){
+            e.printStackTrace();
+            resultInfo = new ResultInfo(false);
         }
         String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
         response.getWriter().write(jsonData);

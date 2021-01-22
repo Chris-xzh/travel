@@ -72,4 +72,16 @@ public class RouteService {
         return route;
     }
 
+    public PageBean<Route> getPageBeanByFavoriteRank(int curPage,Map<String,Object> conditionMap)throws Exception{
+        PageBean<Route> pageBean = new PageBean<Route>();
+        pageBean.setCurPage(curPage);
+        int pageSize= 8;
+        pageBean.setPageSize(pageSize);
+        int count = routeDao.getCountByFavoriteRank(conditionMap);
+        pageBean.setCount(count);
+        List<Route> routeList = routeDao.getRoutesFavoriteRankByPage(curPage,pageSize,conditionMap);
+        pageBean.setData(routeList);
+        return pageBean;
+    }
+
 }
