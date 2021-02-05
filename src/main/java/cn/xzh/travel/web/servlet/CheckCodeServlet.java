@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 验证码
  */
-@WebServlet("/checkCode")
+@WebServlet(name="CheckCodeServlet",urlPatterns = "/checkCode")
 public class CheckCodeServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		

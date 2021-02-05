@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/favorite")
+@WebServlet(name="FavoriteServlet",urlPatterns = "/favorite")
 public class FavoriteServlet extends BaseServlet {
 
     private FavoriteService favoriteService = new FavoriteService();

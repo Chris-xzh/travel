@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/user")
+@WebServlet(name="UserServlet",urlPatterns = "/user")
 public class UserServlet extends BaseServlet {
     /**
      * 实例用户业务类
@@ -47,7 +47,6 @@ public class UserServlet extends BaseServlet {
             }
         }
         String date =  new ObjectMapper().writeValueAsString(resultInfo);
-        response.setContentType("text/html;charset=utf-8");
         request.getServletContext().setAttribute("code",resultInfo.getUserCode());
         response.getWriter().write(date);
     }
@@ -61,7 +60,6 @@ public class UserServlet extends BaseServlet {
             if(flag){
                 response.sendRedirect(request.getContextPath()+"/login.html");
             }else{
-                response.setContentType("text/html;charset=utf-8");
                 response.getWriter().write("激活失败");
             }
         }catch (Exception e){
@@ -103,7 +101,6 @@ public class UserServlet extends BaseServlet {
             throw new RuntimeException(e);//系统异常，抛到友好页面
         }
         String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
-        response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonData);
     }
 
@@ -116,7 +113,6 @@ public class UserServlet extends BaseServlet {
             resultInfo = new ResultInfo(true,user,null);
         }
         String jsonData =  new ObjectMapper().writeValueAsString(resultInfo);
-        response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonData);
     }
 

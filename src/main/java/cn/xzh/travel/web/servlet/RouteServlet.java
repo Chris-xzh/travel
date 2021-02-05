@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/route")
+@WebServlet(name="RouteServlet",urlPatterns = "/route")
 public class RouteServlet extends BaseServlet{
 
     private RouteService routeService = new RouteService();

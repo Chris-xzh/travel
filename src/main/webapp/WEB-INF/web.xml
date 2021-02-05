@@ -4,4 +4,19 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
+   <!-- <filter>
+        <filter-name>CharchaterFilter</filter-name>
+        <filter-class>cn.xzh.travel.web.filter.CharchaterFilter</filter-class>
+        <init-param>
+            <param-name>excludedPaths</param-name>
+            <param-value>/webapp/*,*.html,*.js,*.ico</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharchaterFilter</filter-name>
+        &lt;!&ndash; 防止过滤掉图片等安全静态资源请求 &ndash;&gt;
+        <url-pattern>/*</url-pattern>
+        &lt;!&ndash;<url-pattern>/*</url-pattern>&ndash;&gt;
+    </filter-mapping>-->
 </web-app>

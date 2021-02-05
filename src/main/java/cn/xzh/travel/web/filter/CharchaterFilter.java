@@ -9,11 +9,15 @@ import java.io.IOException;
 /**
  * 解决全站乱码问题，处理所有的请求
  */
-@WebFilter("")
+@WebFilter(filterName = "CharchaterFilter",servletNames =
+        {"CategoryServlet",
+        "CheckCodeServlet",
+        "FavoriteServlet",
+        "RouteServlet",
+        "UserServlet"})
 public class CharchaterFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
@@ -29,6 +33,7 @@ public class CharchaterFilter implements Filter {
         }
         //处理响应乱码
         response.setContentType("text/html;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
         filterChain.doFilter(request,response);
     }
 
